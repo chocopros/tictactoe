@@ -30,9 +30,9 @@ coor = [[(40,50),(165,50),(290,50)],
         [(40,300),(165,300),(290,300)]]
 
 #Donde se van a almacenas las jugadas y la logica del juego
-tablero = [['','','O'],
+tablero = [['','',''],
            ['','',''],
-           ['X','','']]
+           ['','','']]
 
 
 #* graficar o renderizar las x y la y
@@ -43,6 +43,7 @@ def dibujar_o(fila,col):
     screen.blit(circulo, coor[fila][col])
 
 def graficar_board():
+
     screen.blit(fondo, (0,0))
 
     for fila in range (3):
@@ -61,6 +62,23 @@ turno = 'X'
 #variable de control que si el juego esta o no terminado o en funcionamiento
 game_over = False
 
+#Definir Ganador
+def verificar_ganador():
+    #verificar Ganador por columnas
+    for i in range (3):
+        if tablero[i][0] == tablero[i][1] == tablero[i][2] != '':
+            return True
+        if tablero[0][i] == tablero[1][i] == tablero[2][i] != '':
+            return True
+        
+    #Verificar si hay un ganador de forma Diagonal
+    if tablero[0][0] == tablero[1][1] == tablero[2][2] != '':
+        return True
+    if tablero[0][2] == tablero[1][1] == tablero[2][0] != '':
+        return True
+    
+    return False
+
 #donde se vizualzia todos lso frames del juego
 while not game_over:
     #definiciendo los30 fps
@@ -75,13 +93,20 @@ while not game_over:
             mouseX, mouseY = event.pos
             #print(mouseX,mouseY)
             if (mouseX >= 40 and mouseX < 415) and (mouseY >= 50 and mouseY < 425):
-                print(mouseX,mouseY)
-                
+                #print(mouseX,mouseY)
+                fila = (mouseY - 50) // 125
+                col = (mouseX - 50) // 125
+                print(fila,col)
+                if tablero[fila][col] == '':
+                    tablero[fila][col] = turno
+                    fin_juego = verificar_ganador()
+                    if fin_juego:
+                        print(f'El jugador {turno} ha ganado!')
+                    turno = 'O' if turno == 'X' else 'X'
+
     graficar_board()
 
     #Actualizamos nuestro frame
     pygame.display.update()
-
-    
 
 pygame.quit()
